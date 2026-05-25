@@ -35,7 +35,7 @@ public class RegistroUsuarioControlador {
             Model model) {
         try {
             usuarioServicio.guardarUsuario(registroDTO);
-            return "redirect:/registro?exito";
+            return "redirect:/login?registroExitoso";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
             model.addAttribute("usuario", registroDTO);
@@ -43,3 +43,4 @@ public class RegistroUsuarioControlador {
         }
     }
 }
+

@@ -6,73 +6,354 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inicio de sesion</title>
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Animate -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #198754, #0d6efd);
+            min-height: 100vh;
+        }
+
+        .custom-navbar {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 12px;
+            padding-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        .custom-navbar.scrolled {
+            background: rgba(0, 0, 0, 0.45);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand i {
+            font-size: 1.4rem;
+            color: #8dffb1;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.03);
+            transition: 0.2s;
+        }
+
+        .brand-text {
+            background: linear-gradient(to right, #ffffff, #d8f3ff);
+
+            background-clip: text;
+            -webkit-background-clip: text;
+
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .login-header i {
+            font-size: 3rem;
+            color: #8dffb1;
+            margin-bottom: 10px;
+        }
+
+        .login-header h1 {
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            height: 55px;
+        }
+
+        .form-control:focus {
+            transform: scale(1.02);
+            transition: 0.2s;
+            box-shadow: 0 0 10px rgba(25, 135, 84, 0.3);
+        }
+
+        .input-group-text {
+            border-radius: 12px 0 0 12px;
+            background-color: white;
+        }
+
+        .form-floating label {
+            color: #666;
+        }
+
+        .btn-login {
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 1.05rem;
+            background: linear-gradient(135deg, #198754, #20c997);
+            border: none;
+            transition: 0.2s;
+            color: white;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-alert-error {
+            background: rgba(255, 80, 80, 0.15);
+            border: 1px solid rgba(255, 120, 120, 0.4);
+            color: #ffe3e3;
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .custom-alert-info {
+            background: rgba(0, 255, 170, 0.12);
+            border: 1px solid rgba(0, 255, 170, 0.25);
+            color: #d9fff3;
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .register-link {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .register-link a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+
         <div class="container">
-            <a class="navbar-brand" th:href="@{/}">
-                Registro e inicio de sesión
+
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+
+                <i class="bi bi-shield-lock-fill me-2"></i>
+
+                <span class="brand-text">
+                    Registro e inicio de sesión
+                </span>
+
             </a>
+
         </div>
+
     </nav>
 
-    <!-- ESPACIO POR NAVBAR FIJA -->
-    <div style="margin-top: 80px;"></div>
+    <div style="margin-top: 120px;"></div>
 
     <div class="container">
 
         <div class="row justify-content-center">
-            <div class="col-md-6">
 
-                <h1 class="mb-4">Inicio de sesion</h1>
+            <div class="col-md-6 col-lg-5">
 
-                <form th:action="@{/login}" method="post">
 
-                    <div th:if="${param.error}">
-                        <div class="alert alert-danger">
-                            Usuario o contraseña invalidos
+                <!-- Alerta exito -->
+                <div th:if="${param.registroExitoso}">
+
+                    <div class="custom-alert-info animate__animated animate__fadeInDown">
+
+                        <div class="d-flex align-items-center">
+
+                            <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+
+                            <div>
+                                <strong>Registro exitoso</strong><br>
+                                Se ha registrado exitosamente a la aplicación.
+                            </div>
+
                         </div>
+
                     </div>
 
-                    <div th:if="${param.Logout}">
-                        <div class="alert alert-info">
-                            Se he cerrado la sesion de manera correcta.
+                </div>
+
+                <!-- Alerta error -->
+                <div th:if="${param.error}">
+
+                    <div class="custom-alert-error animate__animated animate__shakeX">
+
+                        <div class="d-flex align-items-center">
+
+                            <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+
+                            <div>
+                                <strong>Error</strong><br>
+                                Usuario o contraseña invalidos
+                            </div>
+
                         </div>
+
                     </div>
 
-                    <!-- USUARIO -->
-                    <div class="mb-3">
-                        <label class="form-label" for="usuario">Nombre de Usuario o email</label>
-                        <input id="usuario" type="text" name="username" class="form-control" placeholder="Digite su usuario o email" required />
+                </div>
+
+                <!-- Alerta logout -->
+                <div th:if="${param.Logout}">
+
+                    <div class="custom-alert-info animate__animated animate__fadeInDown">
+
+                        <div class="d-flex align-items-center">
+
+                            <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+
+                            <div>
+                                <strong>Sesión cerrada</strong><br>
+                                Se he cerrado la sesion de manera correcta.
+                            </div>
+
+                        </div>
+
                     </div>
 
-                    <!-- CONTRASEÑA -->
-                    <div class="mb-3">
-                        <label class="form-label" for="password">Contraseña</label>
-                        <input id="password" type="password" name="password" class="form-control" placeholder="Digite su contraseña" required />
+                </div>
+
+                <div class="login-card animate__animated animate__fadeInUp">
+
+                    <div class="login-header">
+
+                        <i class="bi bi-person-circle"></i>
+
+                        <h1>Inicio de sesion</h1>
+
                     </div>
 
-                    <!-- BOTÓN -->
-                    <div class="d-grid gap-2">
-                        <input type="submit" class="form-control btn btn-primary" id="Loging-submit" value = "Iniciar sesion">
-                    </div>
-                </form>
+                    <div class="p-4">
 
-                <div class="mt-3 text-center">
-                        <span>Si eres nuevo</span>
-                        <a th:href="@{/registro}">Registrate aquí</a>
+                        <form th:action="@{/login}" method="post">
+
+                            <!-- Usuario -->
+                            <div class="input-group mb-4">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-person"></i>
+                                </span>
+
+                                <div class="form-floating flex-grow-1">
+
+                                    <input id="usuario" type="text" name="username" class="form-control"
+                                        placeholder="Digite su usuario o email" required />
+
+                                    <label for="usuario">
+                                        Nombre de Usuario o email
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="input-group mb-4">
+
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+
+                                <div class="form-floating flex-grow-1">
+
+                                    <input id="password" type="password" name="password" class="form-control"
+                                        placeholder="Digite su contraseña" required />
+
+                                    <label for="password">
+                                        Contraseña
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Boton de inicio -->
+                            <div class="d-grid gap-2">
+
+                                <input type="submit" class="btn btn-login" id="Loging-submit" value="Iniciar sesion">
+
+                            </div>
+
+                        </form>
+
+                        <!-- Link de registro -->
+                        <div class="mt-4 text-center register-link">
+
+                            <span>Si eres nuevo</span>
+
+                            <a th:href="@{/registro}">
+                                Registrate aquí
+                            </a>
+
+                        </div>
+
                     </div>
+
+                </div>
 
             </div>
         </div>
 
     </div>
 
+    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+        const navbar = document.querySelector('.custom-navbar');
+
+        window.addEventListener('scroll', () => {
+
+            if (window.scrollY > 20) {
+
+                navbar.classList.add('scrolled');
+
+            } else {
+
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+    </script>
 
 </body>
 

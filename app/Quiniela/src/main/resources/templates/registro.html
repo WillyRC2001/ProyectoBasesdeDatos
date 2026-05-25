@@ -5,133 +5,472 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro de usuario</title>
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Animate CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #198754, #0d6efd);
+            min-height: 100vh;
+        }
+
+        .card-form {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header-custom {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 18px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            height: 55px;
+        }
+
+        .form-control:focus {
+            transform: scale(1.02);
+            transition: 0.2s;
+            box-shadow: 0 0 10px rgba(25, 135, 84, 0.3);
+        }
+
+        .form-floating label {
+            color: #666;
+        }
+
+        .input-group-text {
+            border-radius: 12px 0 0 12px;
+            background-color: white;
+        }
+
+        .btn-success {
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: bold;
+        }
+
+        .text-white-soft {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .login-link a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .req-valid {
+            color: #8dffb1 !important;
+            font-weight: bold;
+        }
+
+        .req-invalid {
+            color: #ff9b9b !important;
+            font-weight: bold;
+        }
+
+        .custom-alert {
+            background: rgba(255, 80, 80, 0.15);
+            border: 1px solid rgba(255, 120, 120, 0.4);
+            color: #ffe3e3;
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-navbar {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand i {
+            font-size: 1.4rem;
+            color: #8dffb1;
+        }
+
+        .brand-text {
+            background: linear-gradient(to right, #ffffff, #d8f3ff);
+
+            background-clip: text;
+            -webkit-background-clip: text;
+
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .custom-navbar.scrolled {
+            background: rgba(0, 0, 0, 0.45);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            transition: 0.3s;
+        }
+    </style>
 </head>
 
 <body>
 
     <!-- NAVBAR -->
-    <nav class="navbar navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+
         <div class="container">
-            <a class="navbar-brand" th:href="@{/}">
-                Registro e inicio de sesión
+
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+
+                <i class="bi bi-shield-lock-fill me-2"></i>
+
+                <span class="brand-text">
+                    Registro e inicio de sesión
+                </span>
+
             </a>
+
         </div>
+
     </nav>
 
-    <div style="margin-top: 80px;"></div>
+    <div style="margin-top: 100px;"></div>
 
-    <div class="container">
+    <div class="container mb-5">
+
         <div class="row justify-content-center">
-            <div class="col-md-6">
 
+            <div class="col-lg-10">
+
+                <!-- Exito -->
                 <div th:if="${param.exito}">
                     <div class="alert alert-info">
                         Se ha registrado exitosamente a la aplicación
                     </div>
                 </div>
 
-                <!-- Mensaje de error -->
+                <!-- Error -->
                 <div th:if="${error}">
-                    <div class="alert alert-danger">
-                        <p th:text="${error}"></p>
-                    </div>
-                </div>
 
-                <h1 class="mb-4">Regístrate</h1>
+                    <div class="custom-alert animate__animated animate__shakeX">
+
+                        <div class="d-flex align-items-center">
+
+                            <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+
+                            <div>
+                                <strong>Error</strong><br>
+                                <span th:text="${error}"></span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
 
                 <form th:action="@{/registro}" method="post" th:object="${usuario}">
 
-                    <!-- NOMBRE -->
-                    <div class="mb-3">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" class="form-control" th:field="*{nombre}" required />
-                    </div>
+                    <div class="row g-4">
 
-                    <!-- SEGUNDO NOMBRE -->
-                    <div class="mb-3">
-                        <label class="form-label">Segundo Nombre <span class="text-muted">(opcional)</span></label>
-                        <input type="text" class="form-control" th:field="*{segundoNombre}" />
-                    </div>
+                        <!-- Datos personales -->
+                        <div class="col-md-6">
 
-                    <!-- PRIMER APELLIDO -->
-                    <div class="mb-3">
-                        <label class="form-label">Primer Apellido</label>
-                        <input type="text" class="form-control" th:field="*{primerApellido}" required />
-                    </div>
+                            <div class="card card-form h-100 animate__animated animate__fadeInLeft">
 
-                    <!-- SEGUNDO APELLIDO -->
-                    <div class="mb-3">
-                        <label class="form-label">Segundo Apellido</label>
-                        <input type="text" class="form-control" th:field="*{segundoApellido}" required />
-                    </div>
+                                <div class="card-header-custom">
+                                    Información Personal
+                                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="usuario">Nombre de Usuario</label>
-                        <input id="usuario" type="text" class="form-control" th:field="*{nombreUsuario}" required />
-                    </div>
+                                <div class="card-body p-4">
 
-                    <div class="mb-3">
-                        <label class="form-label" for="email">Correo</label>
-                        <input id="email" type="email" class="form-control" th:field="*{correo}" required />
-                    </div>
+                                    <!-- Nombre -->
+                                    <div class="input-group mb-3">
 
-                    <div class="mb-3">
-                        <label class="form-label" for="password">Contraseña</label>
-                        <input id="password" type="password" class="form-control" th:field="*{contrasena}"
-                            required />
-                        <div class="form-text mt-1">
-                            <span id="req-length" class="text-danger">✗ Mínimo 8 caracteres</span><br>
-                            <span id="req-upper" class="text-danger">✗ Al menos una mayúscula</span><br>
-                            <span id="req-number" class="text-danger">✗ Al menos un número</span><br>
-                            <span id="req-special" class="text-danger">✗ Al menos un carácter especial</span>
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+
+                                        <div class="form-floating flex-grow-1">
+
+                                            <input type="text" class="form-control" id="nombre" placeholder="Nombre"
+                                                th:field="*{nombre}" required />
+
+                                            <label for="nombre">Nombre</label>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group mb-3">
+
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-plus"></i>
+                                        </span>
+
+                                        <div class="form-floating flex-grow-1">
+
+                                            <input type="text" class="form-control" id="segundoNombre"
+                                                placeholder="Segundo Nombre" th:field="*{segundoNombre}" />
+
+                                            <label for="segundoNombre">
+                                                Segundo Nombre (opcional)
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group mb-3">
+
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-badge"></i>
+                                        </span>
+
+                                        <div class="form-floating flex-grow-1">
+
+                                            <input type="text" class="form-control" id="primerApellido"
+                                                placeholder="Primer Apellido" th:field="*{primerApellido}" required />
+
+                                            <label for="primerApellido">
+                                                Primer Apellido
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group mb-3">
+
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-vcard"></i>
+                                        </span>
+
+                                        <div class="form-floating flex-grow-1">
+
+                                            <input type="text" class="form-control" id="segundoApellido"
+                                                placeholder="Segundo Apellido" th:field="*{segundoApellido}" required />
+
+                                            <label for="segundoApellido">
+                                                Segundo Apellido
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- FECHA -->
+                                    <div class="input-group mb-3">
+
+                                        <span class="input-group-text">
+                                            <i class="bi bi-calendar-date"></i>
+                                        </span>
+
+                                        <div class="form-floating flex-grow-1">
+
+                                            <input id="fechaNacimiento" type="date" class="form-control"
+                                                placeholder="Fecha" th:field="*{fechaNacimiento}" required />
+
+                                            <label for="fechaNacimiento">
+                                                Fecha de nacimiento
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="fechaNacimiento">Fecha de nacimiento</label>
-                        <input id="fechaNacimiento" type="date" class="form-control" th:field="*{fechaNacimiento}"
-                            required />
-                    </div>
+                        <!-- Datos cuenta -->
+                        <div class="col-md-6">
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-success">Registrar</button>
-                    </div>
+                            <div class="card card-form h-100 animate__animated animate__fadeInRight">
 
-                    <div class="mt-3 text-center">
-                        <span>Si estás registrado</span>
-                        <a th:href="@{/login}">inicia sesión aquí</a>
+                                <div class="card-header-custom">
+                                    Datos de la Cuenta
+                                </div>
+
+                                <div class="card-body p-4">
+
+                                    <div class="input-group mb-3">
+
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-circle"></i>
+                                        </span>
+
+                                        <div class="form-floating flex-grow-1">
+
+                                            <input id="usuario" type="text" class="form-control" placeholder="Usuario"
+                                                th:field="*{nombreUsuario}" required />
+
+                                            <label for="usuario">
+                                                Nombre de Usuario
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group mb-3">
+
+                                        <span class="input-group-text">
+                                            <i class="bi bi-envelope"></i>
+                                        </span>
+
+                                        <div class="form-floating flex-grow-1">
+
+                                            <input id="email" type="email" class="form-control" placeholder="Correo"
+                                                th:field="*{correo}" required />
+
+                                            <label for="email">
+                                                Correo
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group mb-2">
+
+                                        <span class="input-group-text">
+                                            <i class="bi bi-lock"></i>
+                                        </span>
+
+                                        <div class="form-floating flex-grow-1">
+
+                                            <input id="password" type="password" class="form-control"
+                                                placeholder="Contraseña" th:field="*{contrasena}" required />
+
+                                            <label for="password">
+                                                Contraseña
+                                            </label>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- Barra de seguridad para el password -->
+                                    <div class="progress mt-2 mb-3">
+
+                                        <div id="password-strength" class="progress-bar" style="width:0%">
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Validaciones para el password -->
+                                    <div class="form-text text-white-soft mt-1 mb-4">
+
+                                        <span id="req-length" class="req-invalid">
+                                            ✗ Mínimo 8 caracteres
+                                        </span><br>
+
+                                        <span id="req-upper" class="req-invalid">
+                                            ✗ Al menos una mayúscula
+                                        </span><br>
+
+                                        <span id="req-number" class="req-invalid">
+                                            ✗ Al menos un número
+                                        </span><br>
+
+                                        <span id="req-special" class="req-invalid">
+                                            ✗ Al menos un carácter especial
+                                        </span>
+
+                                    </div>
+
+                                    <div class="d-grid gap-2">
+
+                                        <button type="submit" class="btn btn-success">
+                                            Registrar
+                                        </button>
+
+                                    </div>
+
+                                    <!-- LOGIN -->
+                                    <div class="mt-4 text-center login-link">
+
+                                        <span class="text-white-soft">
+                                            Si estás registrado
+                                        </span>
+
+                                        <a th:href="@{/login}">
+                                            inicia sesión aquí
+                                        </a>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                 </form>
+
             </div>
         </div>
     </div>
 
+    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+
         const password = document.getElementById('password');
+
         const reqLength = document.getElementById('req-length');
         const reqUpper = document.getElementById('req-upper');
         const reqNumber = document.getElementById('req-number');
         const reqSpecial = document.getElementById('req-special');
 
+        const strengthBar = document.getElementById('password-strength');
+
         function toggleReq(el, valid) {
-            const texto = el.textContent.substring(2);
+
+            let texto = el.textContent;
+
+            texto = texto.replace('✓ ', '');
+            texto = texto.replace('✗ ', '');
+
             if (valid) {
-                el.classList.remove('text-danger');
-                el.classList.add('text-success');
-                el.textContent = '✓ ' + texto;
+
+                el.classList.remove('req-invalid');
+                el.classList.add('req-valid');
+
+                el.innerHTML = '✓ ' + texto;
+
             } else {
-                el.classList.remove('text-success');
-                el.classList.add('text-danger');
-                el.textContent = '✗ ' + texto;
+
+                el.classList.remove('req-valid');
+                el.classList.add('req-invalid');
+
+                el.innerHTML = '✗ ' + texto;
             }
         }
 
         function passwordValida() {
+
             const val = password.value;
+
             return val.length >= 8 &&
                 /[A-Z]/.test(val) &&
                 /[0-9]/.test(val) &&
@@ -139,19 +478,62 @@
         }
 
         password.addEventListener('input', () => {
+
             const val = password.value;
+
             toggleReq(reqLength, val.length >= 8);
             toggleReq(reqUpper, /[A-Z]/.test(val));
             toggleReq(reqNumber, /[0-9]/.test(val));
-            toggleReq(reqSpecial, /[!@#$%^&*()_+\-=\[\]{}:,.<>?]/.test(val));
+
+            toggleReq(reqSpecial,
+                /[!@#$%^&*()_+\-=\[\]{}:,.<>?]/.test(val));
+
+            let fuerza = 0;
+
+            if (val.length >= 8) fuerza++;
+            if (/[A-Z]/.test(val)) fuerza++;
+            if (/[0-9]/.test(val)) fuerza++;
+            if (/[!@#$%^&*()_+\-=\[\]{}:,.<>?]/.test(val)) fuerza++;
+
+            strengthBar.style.width = (fuerza * 25) + '%';
+
+            if (fuerza <= 1) {
+
+                strengthBar.className = 'progress-bar bg-danger';
+
+            } else if (fuerza <= 3) {
+
+                strengthBar.className = 'progress-bar bg-warning';
+
+            } else {
+
+                strengthBar.className = 'progress-bar bg-success';
+            }
         });
 
         document.querySelector('form').addEventListener('submit', (e) => {
+
             if (!passwordValida()) {
-                e.preventDefault(); // ← bloquea el envío
-                password.focus();   // ← enfoca el campo contraseña
+
+                e.preventDefault();
+                password.focus();
             }
         });
+
+        const navbar = document.querySelector('.custom-navbar');
+
+        window.addEventListener('scroll', () => {
+
+            if (window.scrollY > 20) {
+
+                navbar.classList.add('scrolled');
+
+            } else {
+
+                navbar.classList.remove('scrolled');
+            }
+        });
+
     </script>
 
 </body>

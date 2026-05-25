@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/login", "/login/**", "/login*").permitAll()
                         .requestMatchers("/js/**", "/css/**", "/img/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/quinielas/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated() // ← / requiere autenticación
                 )
                 .formLogin(form -> form

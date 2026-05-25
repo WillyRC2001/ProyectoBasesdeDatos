@@ -42,13 +42,11 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     @Override
     public Usuario guardarUsuario(UsuarioRegistroDTO registroDTO) {
 
-        // Validar edad
         if (registroDTO.getFechaNacimiento() == null ||
                 LocalDate.now().minusYears(18).isBefore(registroDTO.getFechaNacimiento())) {
             throw new RuntimeException("Debes tener al menos 18 años para registrarte");
         }
 
-        // Validar duplicados
         if (correoRepositorio.existsByCorreo(registroDTO.getCorreo())) {
             throw new RuntimeException("El correo ya está registrado");
         }
@@ -57,7 +55,6 @@ public class UsuarioServicioImpl implements UsuarioServicio {
             throw new RuntimeException("El nombre de usuario ya está en uso");
         }
 
-        // Crear y guardar usuario
         Usuario usuario = new Usuario(
             "ROLE_USER",
             registroDTO.getNombreUsuario(),
@@ -66,7 +63,7 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         );
         usuarioRepositorio.save(usuario);
 
-        // Crear y guardar nombre completo
+        // guardar nombre completo
         NombreCompleto nombreCompleto = new NombreCompleto(
             registroDTO.getNombre(),
             registroDTO.getSegundoNombre(),
@@ -76,7 +73,7 @@ public class UsuarioServicioImpl implements UsuarioServicio {
         );
         nombreCompletoRepositorio.save(nombreCompleto);
 
-        // Crear y guardar correo
+        // guardar correo
         CorreoElectronico correo = new CorreoElectronico(
             registroDTO.getCorreo(),
             usuario
@@ -89,10 +86,10 @@ public class UsuarioServicioImpl implements UsuarioServicio {
     @Override
     public UserDetails loadUserByUsername(String valor) throws UsernameNotFoundException {
 
-        // Buscar por nombre de usuario
+        // por nombre
         Usuario usuario = usuarioRepositorio.findByNombreUsuario(valor);
 
-        // Si no encuentra, buscar por correo
+        // Si no, por correo
         if (usuario == null) {
             CorreoElectronico correo = correoRepositorio.findByCorreo(valor);
             if (correo != null) {
