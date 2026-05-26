@@ -33,6 +33,10 @@ public class Pronostico {
     @Column(name = "Fecha_Hora_Ingreso")
     private LocalDateTime fechaHoraIngreso;
 
+    @ManyToOne
+    @JoinColumn(name = "Puntuacion")
+    private Puntuacion puntuacion;
+
     public Pronostico() {}
 
     public Long getIdPronostico() { return idPronostico; }
@@ -55,4 +59,7 @@ public class Pronostico {
 
     public LocalDateTime getFechaHoraIngreso() { return fechaHoraIngreso; }
     public void setFechaHoraIngreso(LocalDateTime fechaHoraIngreso) { this.fechaHoraIngreso = fechaHoraIngreso; }
+
+    public Puntuacion getPuntuacion() { return puntuacion; }
+    public void setPuntuacion(Puntuacion puntuacion) { this.puntuacion = puntuacion; }
 }

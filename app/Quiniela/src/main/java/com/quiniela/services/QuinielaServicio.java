@@ -1,5 +1,6 @@
 package com.quiniela.services;
 
+import com.quiniela.dto.RankingDTO;
 import com.quiniela.models.Quiniela;
 import com.quiniela.models.Inscripcion;
 import com.quiniela.models.Pronostico;
@@ -23,4 +24,7 @@ public interface QuinielaServicio {
 
     long contarPronosticosUsuario(String nombreUsuario);
 
+    void calcularPuntuaciones(Long idPartido);
+
+    List<RankingDTO> obtenerRanking(Long idQuiniela);
 }

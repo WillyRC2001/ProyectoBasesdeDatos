@@ -15,4 +15,8 @@ public interface PronosticoRepositorio extends JpaRepository<Pronostico, Long> {
     List<Pronostico> findByUsuarioAndQuiniela(Usuario usuario, Quiniela quiniela);
 
     long countByUsuario(Usuario usuario);
+
+    List<Pronostico> findByPartidoAndQuiniela(Partido partido, Quiniela quiniela);
+
+    List<Pronostico> findByQuinielaAndUsuario(Quiniela quiniela, Usuario usuario);
 }

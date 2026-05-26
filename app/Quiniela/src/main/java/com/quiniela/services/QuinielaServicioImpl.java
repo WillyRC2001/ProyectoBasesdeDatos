@@ -3,19 +3,13 @@ package com.quiniela.services;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.quiniela.dto.RankingDTO;
+import com.quiniela.models.*;
+import com.quiniela.repositories.*;
 import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
 
 import com.quiniela.dto.PronosticoDTO;
-import com.quiniela.models.Inscripcion;
-import com.quiniela.models.Partido;
-import com.quiniela.models.Pronostico;
-import com.quiniela.models.Quiniela;
-import com.quiniela.models.Usuario;
-import com.quiniela.repositories.InscripcionRepositorio;
-import com.quiniela.repositories.PartidoRepositorio;
-import com.quiniela.repositories.PronosticoRepositorio;
-import com.quiniela.repositories.QuinielaRepositorio;
-import com.quiniela.repositories.UsuarioRepositorio;
 
 @Service
 public class QuinielaServicioImpl implements QuinielaServicio {
@@ -25,17 +19,20 @@ public class QuinielaServicioImpl implements QuinielaServicio {
     private final PronosticoRepositorio pronosticoRepositorio;
     private final PartidoRepositorio partidoRepositorio;
     private final UsuarioRepositorio usuarioRepositorio;
+    private final PuntuacionRepositorio puntuacionRepositorio;
 
     public QuinielaServicioImpl(QuinielaRepositorio quinielaRepositorio,
-            InscripcionRepositorio inscripcionRepositorio,
-            PronosticoRepositorio pronosticoRepositorio,
-            PartidoRepositorio partidoRepositorio,
-            UsuarioRepositorio usuarioRepositorio) {
+                                InscripcionRepositorio inscripcionRepositorio,
+                                PronosticoRepositorio pronosticoRepositorio,
+                                PartidoRepositorio partidoRepositorio,
+                                UsuarioRepositorio usuarioRepositorio,
+                                PuntuacionRepositorio puntuacionRepositorio) {   // ← agregar
         this.quinielaRepositorio = quinielaRepositorio;
         this.inscripcionRepositorio = inscripcionRepositorio;
         this.pronosticoRepositorio = pronosticoRepositorio;
         this.partidoRepositorio = partidoRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
+        this.puntuacionRepositorio = puntuacionRepositorio; // ← agregar
     }
 
     @Override
@@ -120,5 +117,87 @@ public class QuinielaServicioImpl implements QuinielaServicio {
     public long contarPronosticosUsuario(String nombreUsuario) {
         Usuario usuario = usuarioRepositorio.findByNombreUsuario(nombreUsuario);
         return pronosticoRepositorio.countByUsuario(usuario);
+    }
+
+    @Override
+    public void calcularPuntuaciones(Long idPartido) {
+        Partido partido = partidoRepositorio.findById(idPartido)
+                .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
+
+        if (!"Finalizado".equalsIgnoreCase(partido.getEstado())) {
+            throw new RuntimeException("El partido no ha finalizado aún");
+        }
+
+        List<Pronostico> pronosticos = pronosticoRepositorio.findAll().stream()
+                .filter(p -> p.getPartido().getIdPartido().equals(idPartido))
+                .collect(java.util.stream.Collectors.toList());
+
+        int golesLocalReal = partido.getGolesLocal();
+        int golesVisitanteReal = partido.getGolesVisitante();
+
+        for (Pronostico p : pronosticos) {
+
+            if (p.getPuntuacion() != null) continue;
+
+            int puntos = 0;
+            int predLocal = p.getGolesPrediccionLocal();
+            int predVisitante = p.getGolesPrediccionVisitante();
+
+            if (predLocal == golesLocalReal && predVisitante == golesVisitanteReal) {
+                puntos = 3;
+
+            } else {
+                boolean realLocalGana    = golesLocalReal > golesVisitanteReal;
+                boolean realVisitanteGana = golesVisitanteReal > golesLocalReal;
+                boolean realEmpate       = golesLocalReal == golesVisitanteReal;
+
+                boolean predLocalGana    = predLocal > predVisitante;
+                boolean predVisitanteGana = predVisitante > predLocal;
+                boolean predEmpate       = predLocal == predVisitante;
+
+                if ((realLocalGana && predLocalGana) ||
+                        (realVisitanteGana && predVisitanteGana) ||
+                        (realEmpate && predEmpate)) {
+                    puntos = 1;
+                }
+            }
+
+            Puntuacion puntuacion = new Puntuacion(puntos, java.time.LocalDate.now());
+            puntuacionRepositorio.save(puntuacion);
+
+            p.setPuntuacion(puntuacion);
+            pronosticoRepositorio.save(p);
+        }
+    }
+
+    @Override
+    public List<RankingDTO> obtenerRanking(Long idQuiniela) {
+        Quiniela quiniela = obtenerQuinielaPorId(idQuiniela);
+
+        List<Inscripcion> inscritos = inscripcionRepositorio.findByQuiniela(quiniela);
+
+        List<RankingDTO> ranking = new java.util.ArrayList<>();
+
+        for (Inscripcion ins : inscritos) {
+            Usuario usuario = ins.getUsuario();
+
+            List<Pronostico> pronosticos = pronosticoRepositorio
+                    .findByQuinielaAndUsuario(quiniela, usuario);
+
+            int total = pronosticos.stream()
+                    .filter(p -> p.getPuntuacion() != null)
+                    .mapToInt(p -> p.getPuntuacion().getPuntosObtenidos())
+                    .sum();
+
+            ranking.add(new RankingDTO(0, usuario.getNombreUsuario(), total));
+        }
+
+        ranking.sort((a, b) -> b.getPuntosTotal() - a.getPuntosTotal());
+
+        for (int i = 0; i < ranking.size(); i++) {
+            ranking.get(i).setPosicion(i + 1);
+        }
+
+        return ranking;
     }
 }

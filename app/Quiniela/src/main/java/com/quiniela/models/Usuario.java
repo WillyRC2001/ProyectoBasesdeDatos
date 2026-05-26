@@ -18,7 +18,7 @@ public class Usuario {
     @Column(name = "Nombre_Usuario", unique = true)
     private String nombreUsuario;
 
-    @Column(name = "Contraseña")
+    @Column(name = "contrasena")
     private String contrasena;
 
     @Column(name = "Fecha_Nacimiento")

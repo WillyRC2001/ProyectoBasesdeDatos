@@ -1,0 +1,110 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quinielas - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        body { background: linear-gradient(135deg, #198754, #0d6efd); min-height: 100vh; }
+        .custom-navbar { background: rgba(0,0,0,0.25); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.1); padding-top: 12px; padding-bottom: 12px; transition: 0.3s; }
+        .custom-navbar.scrolled { background: rgba(0,0,0,0.45); box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .navbar-brand { color: white !important; font-size: 1.5rem; font-weight: bold; }
+        .navbar-brand i { color: #8dffb1; }
+        .brand-text { background: linear-gradient(to right, #ffffff, #d8f3ff); background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+        .page-title { color: white; font-weight: bold; font-size: 2rem; text-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .quiniela-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 8px 25px rgba(0,0,0,0.2); color: white; padding: 25px; transition: 0.3s; }
+        .quiniela-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+        .quiniela-nombre { font-weight: bold; font-size: 1.2rem; color: white; }
+        .quiniela-desc { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+        .meta-info { color: rgba(255,255,255,0.6); font-size: 0.85rem; }
+        .badge-abierta { background: rgba(0,200,120,0.2); border: 1px solid rgba(0,255,170,0.3); color: #8dffb1; border-radius: 8px; padding: 4px 12px; font-size: 0.8rem; }
+        .badge-cerrada { background: rgba(255,80,80,0.2); border: 1px solid rgba(255,120,120,0.3); color: #ffb3b3; border-radius: 8px; padding: 4px 12px; font-size: 0.8rem; }
+        .badge-finalizada { background: rgba(150,150,150,0.2); border: 1px solid rgba(200,200,200,0.3); color: rgba(255,255,255,0.6); border-radius: 8px; padding: 4px 12px; font-size: 0.8rem; }
+        .btn-ranking { border-radius: 12px; padding: 8px 20px; font-weight: bold; background: linear-gradient(135deg, #0d6efd, #6610f2); border: none; color: white; transition: 0.2s; text-decoration: none; display: inline-block; }
+        .btn-ranking:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); color: white; }
+        .btn-back { border-radius: 12px; padding: 8px 20px; border: 1px solid rgba(255,255,255,0.4); color: white; background: transparent; transition: 0.2s; text-decoration: none; display: inline-block; }
+        .btn-back:hover { background: rgba(255,255,255,0.15); color: white; }
+        .btn-logout { border-radius: 12px; padding: 8px 16px; font-weight: bold; border: 1px solid rgba(255,255,255,0.4); color: white; background: transparent; transition: 0.2s; }
+        .btn-logout:hover { background: rgba(255,255,255,0.15); color: white; }
+        .user-badge { color: rgba(255,255,255,0.9); font-size: 0.95rem; }
+        .divider { border-color: rgba(255,255,255,0.15); }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/admin}">
+            <i class="bi bi-shield-lock-fill me-2"></i>
+            <span class="brand-text">Panel Admin</span>
+        </a>
+        <div class="d-flex align-items-center gap-3">
+            <span class="user-badge"><i class="bi bi-person-circle me-1"></i><span sec:authentication="name"></span></span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn-logout"><i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div style="margin-top: 100px;"></div>
+
+<div class="container pb-5">
+    <a th:href="@{/admin}" class="btn-back mb-4 animate__animated animate__fadeIn">
+        <i class="bi bi-arrow-left me-1"></i>Volver al panel
+    </a>
+
+    <h1 class="page-title mb-4 mt-3 animate__animated animate__fadeInDown">
+        <i class="bi bi-trophy-fill me-2"></i>Gestión de Quinielas
+    </h1>
+
+    <div class="row g-4">
+        <div class="col-md-6 animate__animated animate__fadeInUp" th:each="quiniela : ${quinielas}">
+            <div class="quiniela-card h-100">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="quiniela-nombre" th:text="${quiniela.nombreQuiniela}"></div>
+                    <span th:if="${quiniela.estado == 'Abierta'}" class="badge-abierta" th:text="${quiniela.estado}"></span>
+                    <span th:if="${quiniela.estado == 'Cerrada'}" class="badge-cerrada" th:text="${quiniela.estado}"></span>
+                    <span th:if="${quiniela.estado == 'Finalizada'}" class="badge-finalizada" th:text="${quiniela.estado}"></span>
+                </div>
+                <p class="quiniela-desc mb-3" th:text="${quiniela.descripcion}"></p>
+                <hr class="divider" />
+                <div class="row g-2 mb-4">
+                    <div class="col-6 meta-info">
+                        <i class="bi bi-calendar-event me-1"></i>Inicio: <span th:text="${quiniela.fechaInicio}"></span>
+                    </div>
+                    <div class="col-6 meta-info">
+                        <i class="bi bi-calendar-x me-1"></i>Cierre: <span th:text="${quiniela.fechaFin}"></span>
+                    </div>
+                    <div class="col-6 meta-info">
+                        <i class="bi bi-people me-1"></i>Modalidad: <span th:text="${quiniela.modalidad}"></span>
+                    </div>
+                    <div class="col-6 meta-info">
+                        <i class="bi bi-star me-1"></i>Puntuación: <span th:text="${quiniela.tipoPuntuacion}"></span>
+                    </div>
+                </div>
+                <a th:href="@{/admin/quinielas/{id}/ranking(id=${quiniela.idQuiniela})}" class="btn-ranking">
+                    <i class="bi bi-bar-chart-fill me-1"></i>Ver ranking
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(quinielas)}" class="col-12">
+            <div class="quiniela-card text-center py-5">
+                <i class="bi bi-inbox fs-1 d-block mb-3" style="color: rgba(255,255,255,0.4);"></i>
+                <p style="color: rgba(255,255,255,0.6);">No hay quinielas registradas.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const navbar = document.querySelector('.custom-navbar');
+    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 20); });
+</script>
+</body>
+</html>

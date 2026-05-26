@@ -14,4 +14,6 @@ public interface InscripcionRepositorio extends JpaRepository<Inscripcion, Long>
     Inscripcion findByUsuarioAndQuiniela(Usuario usuario, Quiniela quiniela);
 
     List<Inscripcion> findByUsuario(Usuario usuario);
+
+    List<Inscripcion> findByQuiniela(Quiniela quiniela);
 }
