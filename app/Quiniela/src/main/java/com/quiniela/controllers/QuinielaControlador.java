@@ -110,5 +110,21 @@ public class QuinielaControlador {
         return "redirect:/quinielas/" + id + "/pronosticos";
     }
 
+    @GetMapping("/{id}/ranking")
+    public String verRanking(@PathVariable Long id, Model model, Principal principal) {
+        if (!quinielaServicio.estaInscrito(id, principal.getName())) {
+            return "redirect:/quinielas/" + id;
+        }
+
+        Quiniela quiniela = quinielaServicio.obtenerQuinielaPorId(id);
+        List<com.quiniela.dto.RankingDTO> ranking = quinielaServicio.obtenerRanking(id);
+
+        model.addAttribute("quiniela", quiniela);
+        model.addAttribute("ranking", ranking);
+        model.addAttribute("usuarioActual", principal.getName());
+
+        return "ranking";
+    }
+
 }
 

@@ -24,7 +24,5 @@ public interface QuinielaServicio {
 
     long contarPronosticosUsuario(String nombreUsuario);
 
-    void calcularPuntuaciones(Long idPartido);
-
     List<RankingDTO> obtenerRanking(Long idQuiniela);
 }
